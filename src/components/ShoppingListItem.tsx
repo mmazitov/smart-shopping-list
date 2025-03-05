@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
 import { removeItem, togglePurchased } from '../store/shoppingSlice';
 
-import { useDispatch } from 'react-redux';
-import { ShoppingItem } from '../types';
-import { getCategoryName } from '../utils/categories';
-import ItemForm from './ItemForm';
 import Button from './UI/Buttons';
 import Input from './UI/Input';
+import ItemForm from './ItemForm';
+import { ShoppingItem } from '../types';
+import { delay } from '../utils/delay';
+import { getCategoryName } from '../utils/categories';
+import { useDispatch } from 'react-redux';
 
 /**
  * ShoppingListItem component for rendering individual shopping list items.
@@ -22,15 +23,17 @@ const ShoppingListItem: React.FC<{ item: ShoppingItem }> = ({ item }) => {
 	/**
 	 * Handles toggling the purchased state of the item.
 	 */
-	const handleToggle = () => {
+	const handleToggle = async () => {
+		await delay();
 		dispatch(togglePurchased(item.id));
 	};
 
 	/**
 	 * Handles removing the item from the list.
 	 */
-	const handleRemove = () => {
+	const handleRemove = async () => {
 		if (window.confirm('Are you sure you want to remove this item?')) {
+			await delay();
 			dispatch(removeItem(item.id));
 		}
 	};

@@ -1,12 +1,13 @@
 import React, { FormEvent, useEffect, useState } from 'react';
 import { addItem, editItem } from '../store/shoppingSlice';
 
-import { useDispatch } from 'react-redux';
-import { ItemFormProps } from '../types';
 import Button from './UI/Buttons';
 import Input from './UI/Input';
+import { ItemFormProps } from '../types';
 import Label from './UI/Label';
 import Select from './UI/Select';
+import { delay } from '../utils/delay';
+import { useDispatch } from 'react-redux';
 
 /**
  * ItemForm component for adding or editing shopping list items.
@@ -29,7 +30,7 @@ const ItemForm: React.FC<ItemFormProps> = ({
 	 */
 	const [name, setName] = useState(item?.name || '');
 	const [quantity, setQuantity] = useState(item?.quantity || 1);
-	const [category, setCategory] = useState(item?.category || 'fruits');
+	const [category, setCategory] = useState(item?.category || 'other');
 	const [purchased, setPurchased] = useState(item?.purchased || false);
 	const [errors, setErrors] = useState<{ name?: string; quantity?: string }>(
 		{},
@@ -65,11 +66,13 @@ const ItemForm: React.FC<ItemFormProps> = ({
 	 * Handle form submission.
 	 * @param e - The form event.
 	 */
-	const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+	const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
 		if (!validate()) return;
 
 		const itemData = { name, quantity, category, purchased };
+
+		await delay();
 
 		if (isEditing && item) {
 			dispatch(editItem({ id: item.id, updatedItem: itemData }));
@@ -80,7 +83,7 @@ const ItemForm: React.FC<ItemFormProps> = ({
 		if (!isEditing) {
 			setName('');
 			setQuantity(1);
-			setCategory('fruits');
+			setCategory('other');
 			setPurchased(false);
 			setErrors({});
 		} else if (onClose) {
